@@ -1,0 +1,28 @@
+{{ define "main" }}
+
+<div class="content-type--default">
+    <article>
+        <h1>{{ .Title }}</h1>
+        <div class="content">
+            {{ .Content }}
+        </div>
+        {{ $posts := ( where .Site.RegularPages.ByPublishDate.Reverse "Type" "blog" | first 15 ) }}
+        {{ with $posts }}
+        <div>
+            <h2>Recent Posts</h2>
+            <ul class="pages-list">
+                {{ range . }}
+                <li>
+                    <article>
+                        <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+                        <p>{{ .Description }}</p>
+                    </article>
+                </li>
+                {{ end }}
+            </ul>
+        </div>
+        {{ end }}
+    </article>
+</div>
+
+{{ end }}

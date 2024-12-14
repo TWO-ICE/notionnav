@@ -1,0 +1,29 @@
+<header>
+    <a class="btn site-title" href="/">{{ site.Title }}</a>
+    <nav>
+        <menu>
+            {{ range site.Menus.main }}
+            <li><a class="btn" href="{{ .URL }}">
+                    {{ with .Params.Icon }}
+                    {{ partial "icon/feather" . }}
+                    {{ end }}
+                    {{ if not .Params.HideName }}
+                    <span>{{ .Name }}</span>
+                    {{ end }}
+                </a></li>
+            {{ end }}
+        </menu>
+    </nav>
+    <menu>
+        {{ range site.Menus.sub }}
+        <li><a class="btn" href="{{ .URL }}" aria-label="{{ .Name }}">
+                {{ with .Params.Icon }}
+                {{ partial "icon/feather" . }}
+                {{ end }}
+                {{ if not .Params.HideName }}
+                <span>{{ .Name }}</span>
+                {{ end }}
+            </a></li>
+        {{ end }}
+    </menu>
+</header>

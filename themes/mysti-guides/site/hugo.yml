@@ -1,0 +1,33 @@
+baseURL: https://mysti.docs.enchantedcode.co.uk/
+languageCode: en
+title: Mysti Guides Theme
+copyright: Leo Spratt
+
+markup:
+  highlight:
+    noClasses: false
+
+enableGitInfo: true
+
+menu:
+  main:
+    - name: "Home"
+      url: "/"
+    - name: "Blog"
+      url: "/blog/"
+    - name: "Docs"
+      url: "/docs/"
+  sub:
+    - name: Repository
+      params:
+        icon: "git-branch"
+        hideName: true
+      url: "https://github.com/enchant97/hugo-mysti-guides"
+
+module:
+  hugoVersion:
+    extended: true
+    min: "0.117.0"
+
+theme: hugo-mysti-guides
+themesDir: ../..

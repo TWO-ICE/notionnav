@@ -1,0 +1,27 @@
+{{ define "main" }}
+
+<div class="content-type--default">
+    <article>
+        <h1>{{ .Title }}</h1>
+        <div class="content">
+            {{ .Content }}
+        </div>
+        <div>
+            {{ $paginator := .Paginate (.Pages.ByPublishDate.Reverse) }}
+            {{ template "_internal/pagination.html" . }}
+            <ul class="pages-list">
+                {{ range $paginator.Pages }}
+                <li>
+                    <article>
+                        <h2><a href="{{ .RelPermalink }}" title="{{ .Title }}">{{ .Title }}</a></h2>
+                        <p>{{ .Description }}</p>
+                    </article>
+                </li>
+                {{ end }}
+            </ul>
+            {{ template "_internal/pagination.html" . }}
+        </div>
+    </article>
+</div>
+
+{{ end }}

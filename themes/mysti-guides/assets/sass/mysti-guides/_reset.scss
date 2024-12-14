@@ -1,0 +1,18 @@
+body,
+a,
+button,
+div,
+p,
+menu,
+ul,
+ol,
+li,
+time,
+strong,
+table, thead, tbody, tfoot, tr, th, td,
+h1, h2, h3 ,h4 , h5, h6 {
+    font-family: $font-family-main;
+    padding: 0;
+    margin: 0;
+    color: $fg-base-100;
+}

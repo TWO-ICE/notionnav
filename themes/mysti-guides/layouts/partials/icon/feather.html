@@ -1,0 +1,4 @@
+<svg class="icon-feather">
+    {{ $url := (print "/icon/feather-sprite@4.29.1.svg#" .) }}
+    <use href="{{ $url | urlize | relURL }}" />
+</svg>

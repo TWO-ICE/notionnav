@@ -1,0 +1,14 @@
+{{ with .Site.Params.Favicon }}
+{{ range . }}
+<link
+    rel="icon"
+    href="{{ .href }}"
+    {{ with .sizes }}
+    sizes="{{ . }}"
+    {{ end }}
+    {{ with .type }}
+    type="{{ . }}"
+    {{ end }}
+>
+{{ end }}
+{{ end }}

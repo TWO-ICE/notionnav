@@ -1,0 +1,8 @@
+<menu class="toc level-{{ .Level }}">
+    {{ range .Pages }}
+    <li>
+        <a class="btn" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+        {{ partial "sidebar/sections-toc" (dict "Pages" .Pages "Level" (add $.Level 1)) }}
+    </li>
+    {{ end }}
+</menu>

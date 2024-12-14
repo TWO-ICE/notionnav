@@ -1,0 +1,11 @@
+name = "Mysti Guides"
+license = "MIT"
+licenselink = "https://github.com/enchant97/hugo-mysti-guides/blob/main/LICENSE.txt"
+description = ""
+homepage = "https://github.com/enchant97/hugo-mysti-guides"
+tags = []
+features = []
+
+[author]
+  name = "Leo Spratt"
+  homepage = "https://enchantedcode.co.uk/"
