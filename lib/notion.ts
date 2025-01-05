@@ -9,7 +9,9 @@ export async function getLinks() {
     database_id: process.env.NOTION_DATABASE_ID!,
   });
 
-  console.log('First page properties:', response.results[0]?.properties);
+  const pages = response.results.filter((page): page is PageObjectResponse => 'properties' in page);
+
+  console.log('First page properties:', (response.results[0] as PageObjectResponse)?.properties);
 
   return response.results.map((page: any) => ({
     id: page.id,
