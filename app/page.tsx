@@ -1,3 +1,5 @@
+'use client';
+import React, { useState } from 'react';
 import { getLinks } from '@/lib/notion';
 import Navigation from './components/Navigation';
 import { headers } from 'next/headers';
@@ -7,8 +9,17 @@ export const dynamic = 'force-dynamic';
 // 禁用缓存
 export const revalidate = 0;
 
+interface Link {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  icon: string;
+  link: string;
+}
+
 export default async function Home() {
-  // 添加随机参数以防止缓存
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const headersList = headers();
   const links = await getLinks();
   const categories = Array.from(new Set(links.map(link => link.category)));
