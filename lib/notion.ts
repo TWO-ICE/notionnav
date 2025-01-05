@@ -1,5 +1,6 @@
 import { Client } from '@notionhq/client';
 import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
+import { cache } from 'react';
 
 const notion = new Client({
   auth: process.env.NOTION_API_KEY,
@@ -31,14 +32,16 @@ type NotionProperties = {
   };
 };
 
-export async function getLinks() {
+// 使用 React 的 cache 函数来优化性能
+export const getLinks = cache(async () => {
   const response = await notion.databases.query({
     database_id: process.env.NOTION_DATABASE_ID!,
+    cache: 'no-store' // 禁用 HTTP 缓存
   });
 
   const pages = response.results.filter((page): page is PageObjectResponse => 'properties' in page);
 
-  const links = pages.map((page) => {
+  return pages.map((page) => {
     const props = page.properties as unknown as NotionProperties;
     return {
       id: page.id,
@@ -49,6 +52,4 @@ export async function getLinks() {
       link: props.link.url || '',
     };
   });
-
-  return links;
-} 
+}); 
