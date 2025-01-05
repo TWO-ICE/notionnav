@@ -11,6 +11,8 @@ interface Link {
   link: string;
 }
 
+export const revalidate = 60; // 每60秒重新验证
+
 export default async function Home() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const links = await getLinks();

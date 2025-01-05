@@ -38,7 +38,7 @@ export async function getLinks() {
 
   const pages = response.results.filter((page): page is PageObjectResponse => 'properties' in page);
 
-  return pages.map((page) => {
+  const links = pages.map((page) => {
     const props = page.properties as unknown as NotionProperties;
     return {
       id: page.id,
@@ -49,4 +49,6 @@ export async function getLinks() {
       link: props.link.url || '',
     };
   });
+
+  return links;
 } 
