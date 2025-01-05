@@ -1,4 +1,5 @@
 import { Client } from '@notionhq/client';
+import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 
 const notion = new Client({
   auth: process.env.NOTION_API_KEY,
@@ -13,7 +14,7 @@ export async function getLinks() {
 
   console.log('First page properties:', (response.results[0] as PageObjectResponse)?.properties);
 
-  return response.results.map((page: any) => ({
+  return pages.map((page) => ({
     id: page.id,
     title: page.properties.title.title[0]?.plain_text || '',
     description: page.properties.desp.rich_text[0]?.plain_text || '',
