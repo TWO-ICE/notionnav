@@ -1,7 +1,0 @@
-targets:
-  serve:
-    program: hugo
-    args:
-      - serve
-      - -D
-    cwd: site

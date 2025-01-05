@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* 隐藏滚动条但保持可滚动 - Webkit浏览器 */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* 隐藏滚动条但保持可滚动 - Firefox */
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;  /* IE and Edge */
+} 

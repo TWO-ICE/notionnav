@@ -1,2 +1,9 @@
+# 环境变量文件
 .env
-.env.build
+.env.local
+.env.*.local
+
+# 其他通常需要忽略的文件
+node_modules
+.next
+.DS_Store
