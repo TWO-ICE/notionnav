@@ -12,8 +12,6 @@ export async function getLinks() {
 
   const pages = response.results.filter((page): page is PageObjectResponse => 'properties' in page);
 
-  console.log('First page properties:', (response.results[0] as PageObjectResponse)?.properties);
-
   return pages.map((page) => ({
     id: page.id,
     title: page.properties.title.title[0]?.plain_text || '',

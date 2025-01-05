@@ -2,9 +2,5 @@
   "buildCommand": "next build",
   "devCommand": "next dev",
   "installCommand": "npm install",
-  "framework": "nextjs",
-  "environmentVariables": [
-    "NOTION_API_KEY",
-    "NOTION_DATABASE_ID"
-  ]
+  "framework": "nextjs"
 } 
