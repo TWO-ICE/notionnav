@@ -10,3 +10,7 @@ node_modules
 
 # Vercel
 .vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
