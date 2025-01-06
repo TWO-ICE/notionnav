@@ -5,12 +5,23 @@ import Navigation from './components/Navigation';
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
-  const links = await getLinks();
-  const { icon, cover } = await getDatabaseInfo();
-  
-  return (
-    <main>
-      <Navigation links={links} icon={icon} cover={cover} />
-    </main>
-  );
+  try {
+    const [links, { icon, cover }] = await Promise.all([
+      getLinks(),
+      getDatabaseInfo()
+    ]);
+    
+    return (
+      <main>
+        <Navigation links={links} icon={icon} cover={cover} />
+      </main>
+    );
+  } catch (error) {
+    console.error('Error in Home page:', error);
+    return (
+      <main className="flex items-center justify-center min-h-screen">
+        <p className="text-gray-500">加载出错，请稍后重试</p>
+      </main>
+    );
+  }
 } 
