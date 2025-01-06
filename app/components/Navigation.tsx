@@ -58,9 +58,12 @@ export default function Navigation({ links, icon, cover }: NavigationProps) {
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         <div className="flex flex-col h-full">
-          {/* Logo区域 - 简化样式 */}
+          {/* Logo区域 - 添加首页链接 */}
           <div className="h-16 flex items-center px-6 border-b border-gray-100 dark:border-gray-700">
-            <div className="flex items-center gap-3">
+            <a 
+              href="/"
+              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+            >
               {icon && (
                 <img 
                   src={icon} 
@@ -71,7 +74,7 @@ export default function Navigation({ links, icon, cover }: NavigationProps) {
               <h1 className="text-lg font-bold bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">
                 导航站
               </h1>
-            </div>
+            </a>
           </div>
 
           {/* 分类导航 */}
