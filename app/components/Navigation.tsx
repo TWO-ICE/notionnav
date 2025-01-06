@@ -1,15 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-
-interface Link {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  icon: string;
-  link: string;
-}
+import { Link } from '@/lib/notion';
 
 interface NavigationProps {
   links: Link[];
