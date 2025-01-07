@@ -1,21 +1,14 @@
-import { getLinks, getDatabaseInfo, getConfig } from '@/lib/notion';
+import { getLinks, getDatabaseInfo, getConfig } from '../lib/notion';
 import Navigation from './components/Navigation';
-import ErrorBoundary from './components/ErrorBoundary';
 
-// 强制动态渲染
+export const metadata = {
+  title: '导航站',
+  description: '个人导航站',
+};
+
 export const dynamic = 'force-dynamic';
 
-// 错误边界
-export function ErrorBoundaryPage() {
-  return (
-    <ErrorBoundary
-      error={new Error('加载出错，请稍后重试')}
-      reset={() => window.location.reload()}
-    />
-  );
-}
-
-export default async function Home() {
+export default async function Page() {
   try {
     console.group('🔄 初始化数据');
     const [links, { icon, cover }, config] = await Promise.all([
@@ -76,6 +69,6 @@ export default async function Home() {
     );
   } catch (error) {
     console.error('❌ 错误:', error);
-    return <ErrorBoundaryPage />;
+    throw error;  // 让 Next.js 的错误边界处理错误
   }
 } 
