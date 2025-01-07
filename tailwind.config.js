@@ -7,9 +7,16 @@ module.exports = {
   ],
   darkMode: 'class',
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'gray-750': '#2d374850',
+      },
+    },
   },
   plugins: [
-    require('tailwind-scrollbar-hide')
+    async () => {
+      const scrollbarHide = await import('tailwind-scrollbar-hide');
+      return scrollbarHide.default();
+    },
   ],
 } 

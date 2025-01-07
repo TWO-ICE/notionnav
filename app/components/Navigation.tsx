@@ -145,7 +145,7 @@ export default function Navigation({ links, icon, cover }: NavigationProps) {
 
             {/* 分类导航 */}
             <nav className="flex flex-col h-full">
-              <ul className="flex-1 overflow-y-auto py-6 space-y-1 px-3 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              <ul className="flex-1 overflow-y-auto py-6 space-y-1 px-3 overflow-y-auto scrollbar-none">
                 {Object.keys(groupedLinks).map(category => (
                   <li key={category}>
                     <a

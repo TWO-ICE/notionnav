@@ -17,6 +17,9 @@ const nextConfig = {
       { module: /node_modules\/tailwind-scrollbar-hide/ }
     ];
     return config;
+  },
+  experimental: {
+    webpackBuildWorker: true
   }
 };
 
