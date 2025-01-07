@@ -2,7 +2,6 @@ import { Client } from '@notionhq/client';
 import { 
   PageObjectResponse,
   PartialPageObjectResponse,
-  PartialDatabaseObjectResponse,
   DatabaseObjectResponse
 } from '@notionhq/client/build/src/api-endpoints';
 
@@ -22,24 +21,20 @@ export interface Link {
 
 interface NotionConfigProperties {
   type: {
-    type: "select";
     select: { name: string } | null;
   };
   title: {
-    type: "title";
     title: Array<{ plain_text: string }>;
   };
   value: {
-    type: "number";
     number: number | null;
   };
 }
 
-// 配置项类型
 interface ConfigItem {
   type: 'order' | 'url_order';
   title: string;
-  value: number;  // 对于 order 类型，这是排序值
+  value: number;
 }
 
 // 获取配置信息
@@ -61,15 +56,14 @@ export async function getConfig(): Promise<ConfigItem[]> {
       ]
     });
 
-    // 先过滤出有效的页面对象
-    const validPages = response.results.filter(
-      (page): page is PageObjectResponse => 
-        'properties' in page && 
-        page.object === 'page'
-    );
+    // 类型守卫函数
+    const isFullPage = (page: PageObjectResponse | PartialPageObjectResponse): page is PageObjectResponse => {
+      return 'properties' in page;
+    };
 
-    // 处理配置
-    const configs = validPages
+    // 过滤并处理配置
+    const configs = response.results
+      .filter(isFullPage)
       .map((page) => {
         const properties = page.properties as NotionConfigProperties;
         
@@ -78,7 +72,7 @@ export async function getConfig(): Promise<ConfigItem[]> {
         const value = properties.value?.number;
 
         if (!type || !title) {
-          console.warn('Missing required properties:', { pageId: page.id, type, title });
+          console.warn('Missing required properties:', { pageId: page.id });
           return null;
         }
 
@@ -93,52 +87,11 @@ export async function getConfig(): Promise<ConfigItem[]> {
     return configs;
   } catch (error) {
     console.error('Error fetching config:', error);
-    if (error instanceof Error) {
-      console.error('Error details:', error.message);
-    }
     return [];
   }
 }
 
-export async function getLinks(): Promise<Link[]> {
-  try {
-    const response = await notion.databases.query({
-      database_id: process.env.NOTION_DATABASE_ID!,
-      sorts: [
-        { timestamp: "created_time", direction: "ascending" }
-      ]
-    });
-
-    const links = response.results
-      .filter((page): page is PageObjectResponse => 'properties' in page)
-      .map((page) => {
-        try {
-          const properties = page.properties as any;
-
-          return {
-            id: page.id,
-            title: properties.title?.title?.[0]?.plain_text || '',
-            description: properties.desp?.rich_text?.[0]?.plain_text || '',
-            category: properties.cat?.select?.name || '',
-            icon: properties.icon?.files?.[0]?.file?.url || 
-                  properties.icon?.files?.[0]?.external?.url || '',
-            link: properties.link?.url || '',
-            created_time: page.created_time,
-          };
-        } catch (error) {
-          console.error('Error processing page:', error);
-          return null;
-        }
-      })
-      .filter((link): link is Link => link !== null);
-
-    return links;
-  } catch (error) {
-    console.error('Error fetching links:', error);
-    return [];
-  }
-}
-
+// 获取数据库信息
 export async function getDatabaseInfo() {
   try {
     const response = await notion.databases.retrieve({
@@ -159,5 +112,42 @@ export async function getDatabaseInfo() {
       icon: undefined,
       cover: undefined
     };
+  }
+}
+
+// 获取链接列表
+export async function getLinks(): Promise<Link[]> {
+  try {
+    const response = await notion.databases.query({
+      database_id: process.env.NOTION_DATABASE_ID!,
+      sorts: [
+        {
+          property: 'created_time',
+          direction: 'ascending',
+        },
+      ],
+    });
+
+    const isFullPage = (page: PageObjectResponse | PartialPageObjectResponse): page is PageObjectResponse => {
+      return 'properties' in page;
+    };
+
+    return response.results
+      .filter(isFullPage)
+      .map((page) => {
+        const properties = page.properties as any;
+        return {
+          id: page.id,
+          title: properties.title?.title?.[0]?.plain_text ?? '',
+          description: properties.description?.rich_text?.[0]?.plain_text ?? '',
+          category: properties.category?.select?.name ?? '未分类',
+          icon: properties.icon?.files?.[0]?.file?.url ?? '',
+          link: properties.link?.url ?? '',
+          created_time: page.created_time,
+        };
+      });
+  } catch (error) {
+    console.error('Error fetching links:', error);
+    return [];
   }
 } 
