@@ -5,10 +5,24 @@ import {
   DatabaseObjectResponse
 } from '@notionhq/client/build/src/api-endpoints';
 
+// 确保环境变量存在
+if (!process.env.NOTION_API_KEY) {
+  throw new Error('NOTION_API_KEY is not defined');
+}
+
+if (!process.env.NOTION_DATABASE_ID) {
+  throw new Error('NOTION_DATABASE_ID is not defined');
+}
+
+if (!process.env.NOTION_CONFIG_DATABASE_ID) {
+  throw new Error('NOTION_CONFIG_DATABASE_ID is not defined');
+}
+
 const notion = new Client({
   auth: process.env.NOTION_API_KEY,
 });
 
+// 类型定义
 export interface Link {
   id: string;
   title: string;
@@ -37,6 +51,11 @@ interface ConfigItem {
   value: number;
 }
 
+// 类型守卫函数
+function isFullPage(page: PageObjectResponse | PartialPageObjectResponse): page is PageObjectResponse {
+  return 'properties' in page;
+}
+
 // 获取配置信息
 export async function getConfig(): Promise<ConfigItem[]> {
   try {
@@ -56,13 +75,7 @@ export async function getConfig(): Promise<ConfigItem[]> {
       ]
     });
 
-    // 类型守卫函数
-    const isFullPage = (page: PageObjectResponse | PartialPageObjectResponse): page is PageObjectResponse => {
-      return 'properties' in page;
-    };
-
-    // 过滤并处理配置
-    const configs = response.results
+    return response.results
       .filter(isFullPage)
       .map((page) => {
         const properties = page.properties as NotionConfigProperties;
@@ -83,8 +96,6 @@ export async function getConfig(): Promise<ConfigItem[]> {
         };
       })
       .filter((item): item is ConfigItem => item !== null);
-
-    return configs;
   } catch (error) {
     console.error('Error fetching config:', error);
     return [];
@@ -108,10 +119,7 @@ export async function getDatabaseInfo() {
     };
   } catch (error) {
     console.error('Error fetching database info:', error);
-    return {
-      icon: undefined,
-      cover: undefined
-    };
+    return { icon: undefined, cover: undefined };
   }
 }
 
@@ -127,10 +135,6 @@ export async function getLinks(): Promise<Link[]> {
         },
       ],
     });
-
-    const isFullPage = (page: PageObjectResponse | PartialPageObjectResponse): page is PageObjectResponse => {
-      return 'properties' in page;
-    };
 
     return response.results
       .filter(isFullPage)
