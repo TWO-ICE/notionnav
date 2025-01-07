@@ -1,4 +1,4 @@
-import { getLinks, getDatabaseInfo, getConfig } from '@/lib/notion'
+import { getLinks, getDatabaseInfo, getConfig } from '../lib/notion'
 import Navigation from './components/Navigation'
 
 export const metadata = {
