@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Link } from '@/lib/notion';
+import { Link } from '../../lib/notion';
 import NetworkSwitch from './NetworkSwitch';
 
 interface NavigationProps {
