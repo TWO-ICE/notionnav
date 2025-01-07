@@ -14,9 +14,6 @@ module.exports = {
     },
   },
   plugins: [
-    async () => {
-      const scrollbarHide = await import('tailwind-scrollbar-hide');
-      return scrollbarHide.default();
-    },
+    require('tailwind-scrollbar-hide'),
   ],
 } 

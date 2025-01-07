@@ -2,5 +2,10 @@
   "buildCommand": "next build",
   "devCommand": "next dev",
   "installCommand": "npm install",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "env": {
+    "NOTION_API_KEY": "@notion_api_key",
+    "NOTION_DATABASE_ID": "@notion_database_id",
+    "NOTION_CONFIG_ID": "@notion_config_id"
+  }
 } 

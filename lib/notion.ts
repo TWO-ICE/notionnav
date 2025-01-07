@@ -44,8 +44,10 @@ interface ConfigItem {
 // 获取配置信息
 export async function getConfig(): Promise<ConfigItem[]> {
   try {
+    console.log('Fetching config from database:', process.env.NOTION_CONFIG_ID);
+    
     const response = await notion.databases.query({
-      database_id: process.env.NOTION_CONFIG_DATABASE_ID!,
+      database_id: process.env.NOTION_CONFIG_ID!,
       filter: {
         property: "type",
         select: {
@@ -60,41 +62,25 @@ export async function getConfig(): Promise<ConfigItem[]> {
       ]
     });
 
-    console.log('Raw response:', JSON.stringify(response.results[0]?.properties, null, 2));
+    console.log('Config response:', JSON.stringify(response.results, null, 2));
 
     const configs = response.results
       .filter((page): page is PageObjectResponse => 'properties' in page)
       .map((page) => {
         const properties = page.properties as NotionConfigProperties;
-        
-        const type = properties.type?.select?.name;
-        const title = properties.title?.title?.[0]?.plain_text;
-        const value = properties.value?.number;
-
-        console.log('Processing config:', {
-          pageId: page.id,
-          type,
-          title,
-          value
-        });
-
-        if (!type || !title) {
-          console.warn('Missing required properties:', { pageId: page.id, type, title });
-          return null;
-        }
-
-        return {
-          type: type as 'order' | 'url_order',
-          title: title.trim(),
-          value: value ?? 999
+        const config = {
+          type: 'order',
+          title: properties.title.title[0]?.plain_text || '',
+          value: properties.value.number || 999
         };
-      })
-      .filter((item): item is ConfigItem => item !== null);
+        console.log('Processed config:', config);
+        return config;
+      });
 
-    console.log('Final configs:', JSON.stringify(configs, null, 2));
+    console.log('Final configs:', configs);
     return configs;
   } catch (error) {
-    console.error('Error fetching config:', error);
+    console.error('获取配置失败:', error);
     if (error instanceof Error) {
       console.error('Error details:', error.message);
     }
