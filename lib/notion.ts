@@ -1,6 +1,7 @@
 import { Client } from '@notionhq/client';
 import { 
   PageObjectResponse,
+  PartialPageObjectResponse,
   DatabaseObjectResponse
 } from '@notionhq/client/build/src/api-endpoints';
 
@@ -59,38 +60,41 @@ export async function getConfig(): Promise<ConfigItem[]> {
       ]
     });
 
-    console.log('Raw response:', JSON.stringify(response.results[0]?.properties, null, 2));
+    // 修改这里，先进行类型过滤
+    const pageResults = response.results.filter((page): page is PageObjectResponse => 'properties' in page);
+    
+    if (pageResults.length > 0) {
+      console.log('Raw response:', JSON.stringify(pageResults[0].properties, null, 2));
+    }
 
-    const configs = response.results
-      .filter((page): page is PageObjectResponse => 'properties' in page)
-      .map((page) => {
-        const properties = page.properties as NotionConfigProperties;
-        
-        const type = properties.type?.select?.name;
-        const title = properties.title?.title?.[0]?.plain_text;
-        const value = properties.value?.number;
+    const configs = pageResults.map((page) => {
+      const properties = page.properties as NotionConfigProperties;
+      
+      const type = properties.type?.select?.name;
+      const title = properties.title?.title?.[0]?.plain_text;
+      const value = properties.value?.number;
 
-        console.log('Processing config:', {
-          pageId: page.id,
-          type,
-          title,
-          value
-        });
+      console.log('Processing config:', {
+        pageId: page.id,
+        type,
+        title,
+        value
+      });
 
-        if (!type || !title) {
-          console.warn('Missing required properties:', { pageId: page.id, type, title });
-          return null;
-        }
+      if (!type || !title) {
+        console.warn('Missing required properties:', { pageId: page.id, type, title });
+        return null;
+      }
 
-        return {
-          type: type as 'order' | 'url_order',
-          title: title.trim(),
-          value: value ?? 999
-        };
-      })
-      .filter((item): item is ConfigItem => item !== null);
+      return {
+        type: type as 'order' | 'url_order',
+        title: title.trim(),
+        value: value ?? 999
+      };
+    })
+    .filter((item): item is ConfigItem => item !== null);
 
-    console.log('Final configs:', JSON.stringify(configs, null, 2));
+    console.log('Final configs:', configs);
     return configs;
   } catch (error) {
     console.error('Error fetching config:', error);

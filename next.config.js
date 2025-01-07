@@ -12,6 +12,12 @@ const nextConfig = {
       },
     ],
   },
-}
+  webpack: (config) => {
+    config.ignoreWarnings = [
+      { module: /node_modules\/tailwind-scrollbar-hide/ }
+    ];
+    return config;
+  }
+};
 
 module.exports = nextConfig 
