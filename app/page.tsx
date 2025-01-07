@@ -28,7 +28,7 @@ export default async function Page() {
     }, {});
 
     console.log('分类排序配置:', categoryOrder);
-    console.log('现有分类:', [...new Set(links.map(l => l.category))]);
+    console.log('现有分类:', Array.from(new Set(links.map(l => l.category))));
     console.groupEnd();
 
     console.group('🔀 排序过程');
@@ -48,8 +48,8 @@ export default async function Page() {
         return orderA - orderB;
       }
       // 如果只有一个分类有排序值
-      if (orderA !== undefined) return -1;  // A 有排序值，排在前面
-      if (orderB !== undefined) return 1;   // B 有排序值，排在前面
+      if (orderA !== undefined) return -1;
+      if (orderB !== undefined) return 1;
       
       // 如果都没有排序值，按时间排序
       const timeA = new Date(a.created_time).getTime();
@@ -57,9 +57,8 @@ export default async function Page() {
       return timeA - timeB;
     });
 
-    // 打印排序结果
-    console.log('排序前:', [...new Set(links.map(l => `${l.category}(${categoryOrder[l.category] ?? "未配置"})`))]); 
-    console.log('排序后:', [...new Set(sortedLinks.map(l => `${l.category}(${categoryOrder[l.category] ?? "未配置"})`))]); 
+    console.log('排序前:', Array.from(new Set(links.map(l => `${l.category}(${categoryOrder[l.category] ?? "未配置"})`))));
+    console.log('排序后:', Array.from(new Set(sortedLinks.map(l => `${l.category}(${categoryOrder[l.category] ?? "未配置"})`))));
     console.groupEnd();
 
     return (
@@ -69,6 +68,6 @@ export default async function Page() {
     );
   } catch (error) {
     console.error('❌ 错误:', error);
-    throw error;  // 让 Next.js 的错误边界处理错误
+    throw error;
   }
 } 
