@@ -10,9 +10,8 @@ export const metadata: Metadata = {
   description: '个人导航站',
 };
 
-export default async function Home() {
+export default async function Page() {
   try {
-    // 获取数据
     const [links, { icon, cover }] = await Promise.all([
       getLinks(),
       getDatabaseInfo(),
@@ -26,7 +25,6 @@ export default async function Home() {
       />
     );
   } catch (error) {
-    console.error('Error:', error);
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
