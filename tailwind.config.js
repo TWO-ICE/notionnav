@@ -7,13 +7,9 @@ module.exports = {
   ],
   darkMode: 'class',
   theme: {
-    extend: {
-      colors: {
-        'gray-750': '#2d374850',
-      },
-    },
+    extend: {},
   },
   plugins: [
-    require('tailwind-scrollbar-hide'),
+    require('tailwind-scrollbar-hide')
   ],
 } 
