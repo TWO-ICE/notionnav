@@ -15,6 +15,7 @@ export interface Link {
   category: string;
   icon: string;
   link: string;
+  lanlink: string;
   created_time: string;
 }
 
@@ -124,6 +125,7 @@ export async function getLinks(): Promise<Link[]> {
             icon: properties.icon?.files?.[0]?.file?.url || 
                   properties.icon?.files?.[0]?.external?.url || '',
             link: properties.link?.url || '',
+            lanlink: properties.lanlink?.url || '',
             created_time: page.created_time,
           };
         } catch (error) {
