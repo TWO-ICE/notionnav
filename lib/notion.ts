@@ -1,7 +1,6 @@
 import { Client } from '@notionhq/client';
 import { 
   PageObjectResponse,
-  GetDatabaseResponse,
   DatabaseObjectResponse
 } from '@notionhq/client/build/src/api-endpoints';
 
@@ -16,12 +15,48 @@ export interface Link {
   category: string;
   icon: string;
   link: string;
+  created_time: string;
+}
+
+// 配置项类型
+interface ConfigItem {
+  type: 'order' | 'url_order';
+  title: string;
+  value: string | number | boolean;
+}
+
+// 获取配置信息
+export async function getConfig(): Promise<ConfigItem[]> {
+  try {
+    const response = await notion.databases.query({
+      database_id: process.env.NOTION_CONFIG_DATABASE_ID!,
+    });
+
+    return response.results
+      .filter((page): page is PageObjectResponse => 'properties' in page)
+      .map((page) => {
+        const properties = page.properties as any;
+        return {
+          type: properties.type?.select?.name || '',
+          title: properties.title?.title?.[0]?.plain_text || '',
+          value: properties.type?.select?.name === 'url_order' 
+            ? properties.value?.checkbox || false
+            : Number(properties.value?.number || 999),
+        };
+      });
+  } catch (error) {
+    console.error('Error fetching config:', error);
+    return [];
+  }
 }
 
 export async function getLinks(): Promise<Link[]> {
   try {
     const response = await notion.databases.query({
       database_id: process.env.NOTION_DATABASE_ID!,
+      sorts: [
+        { timestamp: "created_time", direction: "ascending" }
+      ]
     });
 
     const links = response.results
@@ -38,6 +73,7 @@ export async function getLinks(): Promise<Link[]> {
             icon: properties.icon?.files?.[0]?.file?.url || 
                   properties.icon?.files?.[0]?.external?.url || '',
             link: properties.link?.url || '',
+            created_time: page.created_time,
           };
         } catch (error) {
           console.error('Error processing page:', error);
@@ -59,26 +95,14 @@ export async function getDatabaseInfo() {
       database_id: process.env.NOTION_DATABASE_ID!,
     });
     
-    // 类型断言为完整的数据库对象
     const database = response as DatabaseObjectResponse;
-
-    // 处理图标
-    let icon: string | undefined;
-    if (database.icon?.type === 'external') {
-      icon = database.icon.external.url;
-    } else if (database.icon?.type === 'file') {
-      icon = database.icon.file.url;
-    }
-
-    // 处理封面
-    let cover: string | undefined;
-    if (database.cover?.type === 'external') {
-      cover = database.cover.external.url;
-    } else if (database.cover?.type === 'file') {
-      cover = database.cover.file.url;
-    }
-
-    return { icon, cover };
+    
+    return {
+      icon: database.icon?.type === 'external' ? database.icon.external.url : 
+            database.icon?.type === 'file' ? database.icon.file.url : undefined,
+      cover: database.cover?.type === 'external' ? database.cover.external.url :
+             database.cover?.type === 'file' ? database.cover.file.url : undefined
+    };
   } catch (error) {
     console.error('Error fetching database info:', error);
     return {

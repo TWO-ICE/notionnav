@@ -16,16 +16,28 @@
 
 ### 1. 复制 Notion 模板
 
-点击链接复制 Notion 模板：[导航站模板](https://desert-bangle-ff2.notion.site/1693b0c7bd71801ab9fcffc61e97872b?v=1693b0c7bd71810d9870000c99238fd4)
+点击链接复制导航数据库模板：[导航站模板](你的模板链接)
+点击链接复制配置数据库模板：[配置模板](你的配置模板链接)
 
-模板包含以下字段：
-- `title`：网站名称
-- `desp`：网站描述
-- `cat`：网站分类
-- `icon`：网站图标
-- `link`：网站链接
+配置数据库包含以下字段：
+- `type`（选择类型）：配置类型
+  - `order`：分类排序
+  - `url_order`：链接排序
+- `title`（标题类型）：
+  - 当 type 为 order 时填写分类名称
+  - 当 type 为 url_order 时填写 "lasted"
+- `value`（数字/复选框类型）：
+  - 当 type 为 order 时填写排序权重（数字越小越靠前）
+  - 当 type 为 url_order 时，true 表示按时间正序，false 表示按时间倒序
+- `description`（富文本类型）：配置说明
 
-### 2. 配置 Notion API
+### 2. 配置环境变量
+
+需要配置两个数据库的 ID：
+- `NOTION_DATABASE_ID`：导航数据库 ID
+- `NOTION_CONFIG_DATABASE_ID`：配置数据库 ID
+
+### 3. 配置 Notion API
 
 1. 访问 [Notion Developers](https://developers.notion.com/docs) 创建一个集成
 2. 点击 `New integration` 创建新的集成
@@ -40,7 +52,7 @@
                         复制这一段作为 NOTION_DATABASE_ID
    ```
 
-### 3. 部署到 Vercel
+### 4. 部署到 Vercel
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyour-repo%2Fnotion-nav)
 
@@ -50,7 +62,7 @@
    - `NOTION_DATABASE_ID`：第 2 步获取的数据库 ID
 3. 点击 `Deploy` 开始部署
 
-### 4. 本地开发（可选）
+### 5. 本地开发（可选）
 
 ```bash
 # 克隆项目
@@ -77,6 +89,7 @@ npm run dev
 3. 点击左侧分类可快速跳转到对应区域
 4. 支持自定义数据库封面图和图标
 5. 移动端可通过左上角按钮打开分类菜单
+6. 通过设置 order 字段的数值来自定义网站排序（数字越小越靠前）
 
 ## 🛠️ 技术栈
 
