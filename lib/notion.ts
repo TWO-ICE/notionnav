@@ -18,11 +18,26 @@ export interface Link {
   created_time: string;
 }
 
+interface NotionConfigProperties {
+  type: {
+    type: "select";
+    select: { name: string } | null;
+  };
+  title: {
+    type: "title";
+    title: Array<{ plain_text: string }>;
+  };
+  value: {
+    type: "number";
+    number: number | null;
+  };
+}
+
 // 配置项类型
 interface ConfigItem {
   type: 'order' | 'url_order';
   title: string;
-  value: string | number | boolean;
+  value: number;  // 对于 order 类型，这是排序值
 }
 
 // 获取配置信息
@@ -30,22 +45,58 @@ export async function getConfig(): Promise<ConfigItem[]> {
   try {
     const response = await notion.databases.query({
       database_id: process.env.NOTION_CONFIG_DATABASE_ID!,
+      filter: {
+        property: "type",
+        select: {
+          equals: "order"
+        }
+      },
+      sorts: [
+        {
+          property: "value",
+          direction: "ascending"
+        }
+      ]
     });
 
-    return response.results
+    console.log('Raw response:', JSON.stringify(response.results[0]?.properties, null, 2));
+
+    const configs = response.results
       .filter((page): page is PageObjectResponse => 'properties' in page)
       .map((page) => {
-        const properties = page.properties as any;
+        const properties = page.properties as NotionConfigProperties;
+        
+        const type = properties.type?.select?.name;
+        const title = properties.title?.title?.[0]?.plain_text;
+        const value = properties.value?.number;
+
+        console.log('Processing config:', {
+          pageId: page.id,
+          type,
+          title,
+          value
+        });
+
+        if (!type || !title) {
+          console.warn('Missing required properties:', { pageId: page.id, type, title });
+          return null;
+        }
+
         return {
-          type: properties.type?.select?.name || '',
-          title: properties.title?.title?.[0]?.plain_text || '',
-          value: properties.type?.select?.name === 'url_order' 
-            ? properties.value?.checkbox || false
-            : Number(properties.value?.number || 999),
+          type: type as 'order' | 'url_order',
+          title: title.trim(),
+          value: value ?? 999
         };
-      });
+      })
+      .filter((item): item is ConfigItem => item !== null);
+
+    console.log('Final configs:', JSON.stringify(configs, null, 2));
+    return configs;
   } catch (error) {
     console.error('Error fetching config:', error);
+    if (error instanceof Error) {
+      console.error('Error details:', error.message);
+    }
     return [];
   }
 }
