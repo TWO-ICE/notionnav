@@ -13,7 +13,6 @@ const nextConfig = {
     ],
   },
   typescript: {
-    // 在生产构建时忽略类型错误
     ignoreBuildErrors: true,
   },
   webpack: (config) => {
